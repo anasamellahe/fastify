@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Test</title>
+</head>
+<body>
+  <input id="msg" placeholder="Type a message"/>
+  <button id="sendBtn" onclick="sendMsg()">Send</button>
+  <div id="log"></div>
+
+  <script>
+    const socket = new WebSocket('ws://localhost:3000/chat')
+
+    socket.onopen = () => {
+      console.log('Connected to server')
+      document.getElementById('log').innerHTML += 'Connected<br>'
+      document.getElementById('sendBtn').disabled = false
+    }
+       window.addEventListener('beforeunload', () => {
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.close(1000, 'Tab closed')
+      }
+    })
+    socket.onmessage = event => {
+      console.log('Received from server:', event.data)
+      document.getElementById('log').innerHTML += event.data + '<br>'
+    }
+
+    socket.onerror = event => {
+      console.error('WebSocket error', event)
+      document.getElementById('log').innerHTML += 'Error<br>'
+    }
+
+    socket.onclose = event => {
+      console.log('WebSocket closed', event.code, event.reason)
+      document.getElementById('log').innerHTML += `Closed (${event.code})<br>`
+      document.getElementById('sendBtn').disabled = true
+    }
+
+    function sendMsg() {
+      const input = document.getElementById('msg')
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(input.value)
+        input.value = ''
+      } else {
+        console.warn('Socket not open. readyState=', socket.readyState)
+        document.getElementById('log').innerHTML += 'Cannot send: socket not open<br>'
+      }
+    }
+  </script>
+</body>
+</html>

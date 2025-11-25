@@ -57,3 +57,4 @@ profile*
 *clinic*
 *flamegraph*
 fastify-app/services/auth/.env
+fastify-app/services/db/app.db

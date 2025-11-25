@@ -56,4 +56,3 @@ profile-*
 profile*
 *clinic*
 *flamegraph*
-fastify-app/services/auth/.env
